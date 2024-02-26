@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>timeLap</title>
+      <style>
+            /* Style on Body */
+            body {
+                  background-color: rgb(16, 16, 40);
+            }
+
+            /* set timer div in center */
+            div.timelap {
+                  position: absolute;
+                  top: 20%;
+                  left: 40%;
+            }
+
+            /* Style on Timer div */
+            div.display {
+                  display: inline-flex;
+                  height: 250px;
+                  width: 250px;
+                  background-color: rgb(1, 1, 31);
+                  border-radius: 50%;
+                  border-color: rgb(1, 1, 31);
+                  animation-name: light;
+                  animation-duration: 5s;
+                  animation-iteration-count: infinite;
+                  animation-timing-function: linear ease-in-out;
+
+            }
+
+            @keyframes light {
+
+                  0%,
+                  100% {
+                        box-shadow: 1px 5px 30px 0px rgb(105, 216, 105)
+                  }
+
+                  50% {
+                        box-shadow: 1px 5px 30px -5px rgb(87, 100, 13)
+                  }
+            }
+
+            /* Style on p tag for Lap */
+            div>p {
+                  color: white;
+                  font-size: 24px;
+                  margin-top: 110px;
+                  margin-left: 15px;
+                  padding-left: 10px;
+            }
+
+            h1 {
+                  color: white;
+            }
+
+            /* Style on Buttons  */
+            div.buttons {
+                  margin-top: 50px;
+            }
+
+            div>button.btn {
+                  border: 1px solid whitesmoke;
+                  border-radius: 50px;
+                  width: 80px;
+                  height: 30px;
+                  color: white;
+                  background-color: rgb(16, 16, 40);
+                  position: relative;
+                  left: 20px;
+                  /* margin-right: 10px; */
+
+            }
+
+            button.btn:hover {
+                  background-color: brown;
+            }
+
+            /* Style on Lap Records */
+            div.laps {
+                  color: white;
+
+            }
+
+            #lapRecord {
+                  margin-top: 20px;
+            }
+      </style>
+</head>
+
+<body>
+      <div class="timelap" id="timer">
+            <div class="display">
+                  <p class="timerDisplay" id="timerHrs">00 : </p>
+                  <p class="timerDisplay" id="timerMins">00 :</p>
+                  <p class="timerDisplay" id="timerSec">00 :</p>
+                  <p class="timerDisplay" id="timerMilisec">00</p>
+            </div>
+
+            <div class="buttons">
+                  <button class="btn" type="button" id="startBtn" onclick="startStop()">Start</button>
+                  <button class="btn" type="button" id="resetBtn" onclick="reset()">Reset</button>
+                  <button class="btn" type="button" id="lapBtn" onclick="lap()">Lap</button>
+            </div>
+
+            <div id="laps">
+                  <p id="lapRecord">Laps:</p>
+            </div>
+      </div>
+      <script>
+            // declared variable for Display time
+            let hours = 0;
+            let minutes = 0;
+            let seconds = 0;
+            let miliseconds = 0;
+
+            let displaymilisecond = miliseconds;
+            let displaySec = seconds;
+            let displayMins = minutes;
+            let displayHours = hours;
+
+            // start timer function 
+            function start() {
+                  miliseconds++;
+                  // condition for display time in 2 digit
+                  if (miliseconds < 10) {
+                        displayMilisec = "0" + miliseconds.toString();
+                  }
+                  else {
+                        displayMilisec = miliseconds;
+                  }
+
+                  if (seconds < 10) {
+                        displaySec = "0" + seconds.toString();
+                  }
+                  else {
+                        displaySec = seconds;
+                  }
+
+                  if (minutes < 10) {
+                        displayMins = "0" + minutes.toString();
+                  }
+                  else {
+                        displayMins = minutes;
+                  }
+
+                  if (hours < 10) {
+                        displayHours = "0" + hours.toString();
+                  }
+                  else {
+                        displayHours = hours;
+                  }
+                  // condition for convert time 
+                  if (miliseconds / 100 === 1) {
+                        seconds++;
+                        miliseconds = 0;
+                        if (seconds / 60 === 1) {
+                              minutes++;
+                              seconds = 0;
+                              if (minutes / 60 === 1) {
+                                    hours++;
+                                    minutes = 0;
+                              }
+                        }
+                  }
+                  document.getElementById("timerMilisec").innerHTML = displayMilisec;
+                  document.getElementById("timerSec").innerHTML = displaySec;
+                  document.getElementById("timerMins").innerHTML = displayMins;
+                  document.getElementById("timerHrs").innerHTML = displayHours;
+
+            }
+
+            // start stopped toggle button 
+            let interval = 0;
+
+            let status = "stopped";
+            function startStop() {
+                  if (status === "stopped") {
+                        interval = window.setInterval(start, 10);
+                        document.getElementById('startBtn').innerHTML = "Stop";
+                        status = "started";
+                  }
+                  else {
+                        window.clearInterval(interval);
+                        document.getElementById('startBtn').innerHTML = "Start";
+                        status = "stopped";
+                  }
+            }
+            // reset time on reset buttton
+            function reset() {
+                  window.clearInterval(interval);
+                  miliseconds = 0;
+                  seconds = 0;
+                  minutes = 0;
+                  hours = 0;
+                  document.getElementById("timerMilisec").innerHTML = "00";
+                  document.getElementById("timerSec").innerHTML = "00 :";
+                  document.getElementById("timerMins").innerHTML = "00 :";
+                  document.getElementById("timerHrs").innerHTML = "00 :";
+                  document.getElementById('startBtn').innerHTML = "Start";
+                  status = "stopped";
+            }
+
+            // display all lap recored
+            let laps = 0;
+            let lapNow = 0;
+            let laprecords = [];
+            function lap() {
+
+                  lapNow = hours + " : " + minutes + " : " + seconds + " : " + miliseconds;
+
+                  laprecords.push(lapNow);
+                  document.getElementById('lapRecord').innerHTML = `Laps: ${laprecords.join('<br>')}`;
+
+            }
+
+
+      </script>
+</body>
+
+</html>
